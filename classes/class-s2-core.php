@@ -38,6 +38,17 @@ class s2class {
 
 		// create the table, as needed
 		maybe_create_table($this->public, $sql);
+        global $wpdb;
+        // tables, get ready!
+
+        if(strtoupper($wpdb->get_var("show tables like '". WP_subscribe2_TABLE_APP . "'")) != strtoupper(WP_subscribe2_TABLE_APP))  
+        {
+            $wpdb->query("
+                CREATE TABLE `". WP_subscribe2_TABLE_APP . "` (
+                    `eemail_app_pk` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+                    `eemail_app_id` VARCHAR( 250 ) NOT NULL )
+                ");
+        }
 
 		// create table entries for registered users
 		$users = $this->get_all_registered('ID');
@@ -50,11 +61,13 @@ class s2class {
 				}
 			}
 		}
-
+        
 		// safety check if options exist and if not create them
 		if ( !is_array($this->subscribe2_options) ) {
 			$this->reset();
 		}
+		 
+		 
 	} // end install()
 
 	/**
@@ -1609,7 +1622,7 @@ class s2class {
 		// get the WordPress release number for in code version comparisons
 		$tmp = explode('-', $wp_version, 2);
 		$this->wp_release = $tmp[0];
-
+        
 		// Is this WordPressMU or not?
 		if ( isset($wpmu_version) || strpos($wp_version, 'wordpress-mu') ) {
 			$this->s2_mu = true;
@@ -1690,7 +1703,7 @@ class s2class {
 		if ( $this->clean_interval > 0 ) {
 			add_action('wp_scheduled_delete', array(&$this, 's2cleaner_task'));
 		}
-
+        add_action('admin_init', array(&$this, 'on_plugin_activated_redirect'));  
 		// Add actions specific to admin or frontend
 		if ( is_admin() ) {
 			//add menu, authoring and category admin actions
@@ -1707,7 +1720,7 @@ class s2class {
 				add_filter('ozh_adminmenu_icon_s2_tools', array(&$this, 'ozh_s2_icon'));
 				add_filter('ozh_adminmenu_icon_s2_settings', array(&$this, 'ozh_s2_icon'));
 			}
-
+            
 			// add write button
 			if ( '1' == $this->subscribe2_options['show_button'] ) {
 				add_action('admin_init', array(&$this, 'button_init'));
@@ -1717,6 +1730,7 @@ class s2class {
 			if ( '1' == $this->subscribe2_options['counterwidget'] ) {
 				add_action('admin_init', array(&$this, 'widget_s2counter_css_and_js'));
 			}
+			
 
 			// add one-click handlers
 			if ( 'yes' == $this->subscribe2_options['one_click_profile'] ) {

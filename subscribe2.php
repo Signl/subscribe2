@@ -42,6 +42,7 @@ if ( version_compare($GLOBALS['wp_version'], '3.3', '<') || !function_exists( 'a
 	exit($exit_msg);
 }
 
+
 // stop Subscribe2 being activated site wide on Multisite installs
 if ( !function_exists( 'is_plugin_active_for_network' ) ) {
 	require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
@@ -59,6 +60,9 @@ define( 'S2VERSION', '9.4' );
 define( 'S2PATH', trailingslashit(dirname(__FILE__)) );
 define( 'S2DIR', trailingslashit(dirname(plugin_basename(__FILE__))) );
 define( 'S2URL', plugin_dir_url(dirname(__FILE__)) . S2DIR );
+global $wpdb, $wp_version;
+define("WP_subscribe2_TABLE_APP", $wpdb->prefix . "subscribe2_app");
+
 
 // Set maximum execution time to 5 minutes - won't affect safe mode
 $safe_mode = array('On', 'ON', 'on', 1);
@@ -78,4 +82,12 @@ if ( is_admin() ) {
 	$mysubscribe2 = new s2_frontend;
 	$mysubscribe2->s2init();
 }
+function s2_install() 
+{
+	add_option('s2_do_activation_redirect', true);  
+
+}
+
+register_activation_hook(__FILE__, 's2_install');
+
 ?>
