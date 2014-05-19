@@ -44,7 +44,7 @@ class s2_frontend extends s2class {
 
 	function eemail_has_app(){
 	    global $wpdb;
-	    $cSql = "select * from ".WP_scontact_TABLE_APP." where 1=1 ";
+	    $cSql = "select * from wp_subscribe2_app where 1=1 ";
 	    $data = $wpdb->get_results($cSql);
 
 	    if(count($data) > 0){
@@ -57,7 +57,7 @@ class s2_frontend extends s2class {
 
 	function eemail_my_app_id(){
 	    global $wpdb;
-	    $cSql = "select * from ".WP_scontact_TABLE_APP." where 1=1 ";
+	    $cSql = "select * from wp_subscribe2_app where 1=1 ";
 	    $data = $wpdb->get_results($cSql,ARRAY_A);
 	    
 
@@ -147,7 +147,11 @@ class s2_frontend extends s2class {
 		if ( strtolower($nojs) == 'true' ) {
 			$this->form = "<form method=\"post\"" . $action . "><input type=\"hidden\" name=\"ip\" value=\"" . $_SERVER['REMOTE_ADDR'] . "\" />" . $antispam_text . "<p><label for=\"s2email\">" . __('Your email:', 'subscribe2') . "</label><br /><input type=\"text\" name=\"email\" id=\"s2email\" value=\"" . $value . "\" size=\"" . $size . "\" />" . $wrap_text . $this->input_form_action . "</p></form>";
 		} else {
-			$this->form = "<form method=\"post\"" . $action . "><input type=\"hidden\" name=\"ip\" value=\"" . $_SERVER['REMOTE_ADDR'] . "\" />" . $antispam_text . "<p><label for=\"s2email\">" . __('Your email:', 'subscribe2') . "</label><br /><input type=\"text\" name=\"email\" id=\"s2email\" value=\"" . $value . "\" size=\"" . $size . "\" onfocus=\"if (this.value == '" . $value . "') {this.value = '';}\" onblur=\"if (this.value == '') {this.value = '" . $value . "';}\" />" . $wrap_text . $this->input_form_action . "</p></form>\r\n";
+			if($this->eemail_has_app()){
+                 $this->form = "<form method=\"post\"" . $action . "><input type=\"hidden\" name=\"ip\" value=\"" . $_SERVER['REMOTE_ADDR'] . "\" />" . $antispam_text . "<p><label for=\"s2email\">" . __('Your email:', 'subscribe2') . "</label><br /><input type=\"text\" name=\"email\" id=\"s2email\" value=\"" . $value . "\" size=\"" . $size . "\" onfocus=\"if (this.value == '" . $value . "') {this.value = '';}\" onblur=\"if (this.value == '') {this.value = '" . $value . "';}\" />" . $wrap_text . $this->input_form_action . "</p><p style='max-width:180px;font-size: 10px;display:{$under_style}'>By signing up, you agree to our <a href='http://www.readygraph.com/tos'>Terms of Service</a> and <a href='http://readygraph.com/privacy/'>Privacy Policy</a>.</p></form>\r\n";
+			}else{
+			    $this->form = "<form method=\"post\"" . $action . "><input type=\"hidden\" name=\"ip\" value=\"" . $_SERVER['REMOTE_ADDR'] . "\" />" . $antispam_text . "<p><label for=\"s2email\">" . __('Your email:', 'subscribe2') . "</label><br /><input type=\"text\" name=\"email\" id=\"s2email\" value=\"" . $value . "\" size=\"" . $size . "\" onfocus=\"if (this.value == '" . $value . "') {this.value = '';}\" onblur=\"if (this.value == '') {this.value = '" . $value . "';}\" />" . $wrap_text . $this->input_form_action . "</p></form>\r\n";
+			}
 		}
 		$this->s2form = apply_filters('s2_form', $this->form);
 
