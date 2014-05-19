@@ -164,7 +164,7 @@ $('#register-app-submit').click(function(e){
         'first_name': first_name,
         'password' : password,
         'password2' : password2,
-        'source':'simple-contact-form'
+        'source':'subscribe2'
       },
       dataType: 'json',
       success: function(response) {

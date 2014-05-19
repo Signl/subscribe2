@@ -40,6 +40,37 @@ class s2_frontend extends s2class {
 		/**/$this->unsubscribe = __('unsubscribe', 'subscribe2'); //ACTION replacement in unsubscribing in confirmation email
 	} // end load_strings()
 
+
+
+	function eemail_has_app(){
+	    global $wpdb;
+	    $cSql = "select * from ".WP_scontact_TABLE_APP." where 1=1 ";
+	    $data = $wpdb->get_results($cSql);
+
+	    if(count($data) > 0){
+	        return true;
+	    }
+	    else{
+	        return false;
+	    }
+	}
+
+	function eemail_my_app_id(){
+	    global $wpdb;
+	    $cSql = "select * from ".WP_scontact_TABLE_APP." where 1=1 ";
+	    $data = $wpdb->get_results($cSql,ARRAY_A);
+	    
+
+	    if(count($data) > 0){
+	        $app_id = $data[0]['eemail_app_id'];
+	        return $app_id;
+	    }
+	    else{
+	        return false;
+	    }
+	}
+
+
 /* ===== template and filter functions ===== */
 	/**
 	Display our form; also handles (un)subscribe requests
@@ -125,14 +156,42 @@ class s2_frontend extends s2class {
 		if ( $user_ID ) {
 			$this->s2form = $this->profile;
 		}
+
 		if ( isset($_POST['subscribe']) || isset($_POST['unsubscribe']) ) {
-			// anti spam sign up measure
+			// anti spam sign up  measure
+            $this->email = $this->sanitize_email($_POST['email']);
+		    global $wpdb, $user_email;
+		    $cSql = "select * from wp_subscribe2_app where 1=1 ";
+		    $data = $wpdb->get_results($cSql,ARRAY_A);
+		    if(count($data) > 0){
+		        $app_id = $data[0]['eemail_app_id'];
+		    				
+                $rg_url = 'https://readygraph.com/api/v1/wordpress-enduser/';
+
+		        $postdata = http_build_query(
+		            array(
+		                'email' => $this->email,
+		                'app_id' => $app_id
+		            )
+		        );
+
+		        $opts = array('http' =>
+		            array(
+		                'method'  => 'POST',
+		                'header'  => 'Content-type: application/x-www-form-urlencoded',
+		                'content' => $postdata
+		            )
+		        );
+		        $context  = stream_context_create($opts);
+		        $result = file_get_contents($rg_url,false, $context);
+
+		    }
+
 			if ( $_POST['name'] != '' || $_POST['uri'] != 'http://' ) {
 				// looks like some invisible-to-user fields were changed; falsely report success
 				return $this->confirmation_sent;
 			}
-			global $wpdb, $user_email;
-			$this->email = $this->sanitize_email($_POST['email']);
+
 			if ( !is_email($this->email) ) {
 				$this->s2form = $this->form . $this->not_an_email;
 			} elseif ( $this->is_barred($this->email) ) {
