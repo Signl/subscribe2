@@ -12,8 +12,8 @@ class s2_admin extends s2class {
 		add_action("admin_print_styles-$s2user", array(&$this, 'user_admin_css'));
 		add_action('load-' . $s2user, array(&$this, 'user_help'));
 
-		//$s2readygraph = add_submenu_page('s2', __('Readygraph App', 'subscribe2'), __('Readygraph App', 'subscribe2'), apply_filters('s2_capability', "manage_options", 'readygraph'), 's2_readygraph', array(&$this, 'readygraph_menu'));
-		//add_action("admin_print_scripts-$s2readygraph", array(&$this, 'readygraph_js'));
+		$s2readygraph = add_submenu_page('s2', __('Readygraph App', 'subscribe2'), __('Readygraph App', 'subscribe2'), apply_filters('s2_capability', "manage_options", 'readygraph'), 's2_readygraph', array(&$this, 'readygraph_menu'));
+		add_action("admin_print_scripts-$s2readygraph", array(&$this, 'readygraph_js'));
 
 		$s2subscribers = add_submenu_page('s2', __('Subscribers', 'subscribe2'), __('Subscribers', 'subscribe2'), apply_filters('s2_capability', "manage_options", 'manage'), 's2_tools', array(&$this, 'subscribers_menu'));
 		add_action("admin_print_scripts-$s2subscribers", array(&$this, 'checkbox_form_js'));

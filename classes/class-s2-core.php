@@ -50,7 +50,9 @@ class s2class {
 				}
 			}
 		}
+		add_option('readygraph_api', "include your api_key"); //option to store ReadyGraph API Key 
 
+		
 		// safety check if options exist and if not create them
 		if ( !is_array($this->subscribe2_options) ) {
 			$this->reset();
@@ -126,7 +128,11 @@ class s2class {
 			$s2_upgrade->upgrade95();
 			$this->subscribe2_options['version'] = '9.5';
 		}
-
+/*		if ( version_compare($this->subscribe2_options['version'], '10.0', '<') ) {
+			$s2_upgrade->upgrade100();
+			$this->subscribe2_options['version'] = '10.0';
+		}
+*/
 		$this->subscribe2_options['version'] = S2VERSION;
 		update_option('subscribe2_options', $this->subscribe2_options);
 
@@ -1693,7 +1699,7 @@ class s2class {
 		if ( $this->clean_interval > 0 ) {
 			add_action('wp_scheduled_delete', array(&$this, 's2cleaner_task'));
 		}
-		//add_action('admin_init', array(&$this, 'on_plugin_activated_redirect'));
+		add_action('admin_init', array(&$this, 'on_plugin_activated_redirect'));
 		// Add actions specific to admin or frontend
 		if ( is_admin() ) {
 			//add menu, authoring and category admin actions

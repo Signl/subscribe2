@@ -82,5 +82,5 @@ if ( is_admin() ) {
 function s2_install() {
 	add_option('s2_do_activation_redirect', true);
 }
-//register_activation_hook(__FILE__, 's2_install');
+register_activation_hook(__FILE__, 's2_install');
 ?>
